@@ -1,5 +1,6 @@
+-- Setup and context
 USE ROLE SYSADMIN;
-USE SCHEMA "SNOWFLAKE"."ACCOUNT_USAGE";
+USE SCHEMA SNOWFLAKE.ACCOUNT_USAGE;
 USE WAREHOUSE MY_WAREHOUSE_NAME;
 
 -- WHs which suffer from spilling
@@ -11,19 +12,19 @@ WITH QUERY_CATEGORISATION AS (
         CASE WHEN BYTES_SPILLED_TO_LOCAL_STORAGE > 0 
             THEN 1 
             ELSE 0 
-            END AS SPILLED_LOCAL,    -- How many queries spilled to local disk
+            END AS SPILLED_LOCAL,                                       -- How many queries spilled to local disk
         CASE WHEN BYTES_SPILLED_TO_REMOTE_STORAGE > 0 
             THEN 1 
             ELSE 0 
-            END AS SPILLED_REMOTE,  -- How many queries spilled to remote disk
+            END AS SPILLED_REMOTE,                                      -- How many queries spilled to remote disk
         CASE WHEN (BYTES_SPILLED_TO_LOCAL_STORAGE + BYTES_SPILLED_TO_REMOTE_STORAGE) > 0 
             THEN 1 
             ELSE 0 
-            END AS SPILLED_EITHER   -- How many queries spilled to either local or remote
+            END AS SPILLED_EITHER                                       -- How many queries spilled to either local or remote
     FROM QUERY_HISTORY
     WHERE 
-        TOTAL_ELAPSED_TIME > 1000   -- Queries which ran for <1s are unlikely to have spilled
-        AND WAREHOUSE_SIZE IS NOT NULL  -- We can exclude queries with no warehouse e.g. DDL
+        TOTAL_ELAPSED_TIME > 1000                                       -- Queries which ran for <1s are unlikely to have spilled
+        AND WAREHOUSE_SIZE IS NOT NULL                                  -- We can exclude queries with no warehouse e.g. DDL
         AND
             (BYTES_SPILLED_TO_LOCAL_STORAGE > 0
             OR BYTES_SPILLED_TO_REMOTE_STORAGE > 0)
