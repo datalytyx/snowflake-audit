@@ -46,13 +46,13 @@ SELECT
     C.WAREHOUSE_SIZE,
     T.QUERY_COUNT,
     COUNT(C.SPILLED_EITHER) AS QUERIES_SPILLED,                         -- Count of queries that spilled
-    ROUND(100*C.SPILLED_EITHER/T.QUERY_COUNT,2) AS PERCENTAGE_SPILLED,  -- Percentage of queries that spilled
+    ROUND(100*QUERIES_SPILLED/T.QUERY_COUNT,2) AS PERCENTAGE_SPILLED,  -- Percentage of queries that spilled
     SUM(SPILLED_LOCAL) as "QUERIES WITH LOCAL SPILLING (bad)",          -- How many spilled locally
     SUM(SPILLED_REMOTE) as "QUERIES WITH REMOTE SPILLING (very bad)"    -- How many spilled remotely
 FROM QUERY_CATEGORISATION C
 LEFT JOIN QUERY_TOTALS T
     ON  C.WAREHOUSE_NAME = T.WAREHOUSE_NAME                             -- Join to the overall query stats to compare the number spilling with the total number
     AND C.WAREHOUSE_SIZE = T.WAREHOUSE_SIZE                             -- We join on both size and name so we can handle cases where a warehouse has been resized, and consider those sizes separately
-GROUP BY USER_NAME, C.WAREHOUSE_NAME, C.WAREHOUSE_SIZE, T.QUERY_COUNT, PERCENTAGE_SPILLED
+GROUP BY USER_NAME, C.WAREHOUSE_NAME, C.WAREHOUSE_SIZE, T.QUERY_COUNT
 ORDER BY QUERIES_SPILLED DESC
 ;
