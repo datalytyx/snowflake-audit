@@ -45,12 +45,12 @@ SELECT
     USER_NAME, 
     C.WAREHOUSE_NAME,
     C.WAREHOUSE_SIZE,
-    MAX(C.START_TIME) MOST_RECENT_START_TIME,
+    MAX(C.START_TIME) AS MOST_RECENT_START_TIME,
     T.QUERY_COUNT,
     COUNT(C.SPILLED_EITHER) AS QUERIES_SPILLED,                         -- Count of queries that spilled
     ROUND(100*QUERIES_SPILLED/T.QUERY_COUNT,2) AS PERCENTAGE_SPILLED,  -- Percentage of queries that spilled
-    SUM(SPILLED_LOCAL) as "QUERIES WITH LOCAL SPILLING (bad)",          -- How many spilled locally
-    SUM(SPILLED_REMOTE) as "QUERIES WITH REMOTE SPILLING (very bad)"    -- How many spilled remotely
+    SUM(SPILLED_LOCAL) AS "QUERIES WITH LOCAL SPILLING (bad)",          -- How many spilled locally
+    SUM(SPILLED_REMOTE) AS "QUERIES WITH REMOTE SPILLING (very bad)"    -- How many spilled remotely
 FROM QUERY_CATEGORISATION C
 LEFT JOIN QUERY_TOTALS T
     ON  C.WAREHOUSE_NAME = T.WAREHOUSE_NAME                             -- Join to the overall query stats to compare the number spilling with the total number
