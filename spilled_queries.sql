@@ -20,7 +20,8 @@ WITH QUERY_CATEGORISATION AS (
         CASE WHEN (BYTES_SPILLED_TO_LOCAL_STORAGE + BYTES_SPILLED_TO_REMOTE_STORAGE) > 0 
             THEN 1 
             ELSE 0 
-            END AS SPILLED_EITHER                                       -- How many queries spilled to either local or remote
+            END AS SPILLED_EITHER,                                      -- How many queries spilled to either local or remote
+        START_TIME
     FROM QUERY_HISTORY
     WHERE 
         TOTAL_ELAPSED_TIME > 1000                                       -- Queries which ran for <1s are unlikely to have spilled
@@ -44,6 +45,7 @@ SELECT
     USER_NAME, 
     C.WAREHOUSE_NAME,
     C.WAREHOUSE_SIZE,
+    MAX(C.START_TIME) MOST_RECENT_START_TIME,
     T.QUERY_COUNT,
     COUNT(C.SPILLED_EITHER) AS QUERIES_SPILLED,                         -- Count of queries that spilled
     ROUND(100*QUERIES_SPILLED/T.QUERY_COUNT,2) AS PERCENTAGE_SPILLED,  -- Percentage of queries that spilled
