@@ -1,5 +1,6 @@
 -- Setup and context
 USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE MY_WAREHOUSE_NAME;
 
 -- These queries help identify access associated with UNC5537 AKA 'r*peflake'
 -- More information can be found at:
@@ -15,7 +16,7 @@ WHERE
     )
 ORDER BY EVENT_TIMESTAMP;
 
--- Identifying access from suspected clients: The following query will return sessions belonging to the suspected clients.
+-- Identifying access from suspected clients: the following query will return sessions belonging to the suspected clients.
 SELECT *
 FROM SNOWFLAKE.ACCOUNT_USAGE.SESSIONS
 WHERE
